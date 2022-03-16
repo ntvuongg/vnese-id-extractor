@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>VNese ID Extractor v1.0</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <!-- <link rel="stylesheet" href="styles.css" /> -->
+        <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+    </head>
+    <body>
+        <div class="logo">
+            <div class="img_cs">
+                <img src="static/logo/uit_logo.png" alt="cs.png" />
+            </div>
+            <div class="img_uit">
+                <img src="static/logo/cs_logo.png" alt="uit.png" />
+            </div>
+        </div>
+        <h1>Vietnamese ID Card Extractor v1.0</h1>
+        <h4>@ Developed by Nguyen Thanh Vuong</h4>
+
+        <div class="overlay">
+            <div class="loading_wrapper">
+                <div class="circle"></div>
+                <div class="circle"></div>
+                <div class="circle"></div>
+                <div class="shadow"></div>
+                <div class="shadow"></div>
+                <div class="shadow"></div>
+                <span>Extracting...</span>
+            </div>
+        </div>
+        <div class="main">
+            <div class="container">
+                <form enctype="multipart/form-data">
+                    <h3>Upload your image :</h3>
+                    <div class="drag-area">
+                            <button id='close'>close</button>
+                        <div class="icon">
+                            <i class="fas fa-images"></i>
+                        </div>
+                        <span class="header">Drag & Drop</span>
+                        <span class="header">or <span class="button">Click here to browse</span></span>
+                        <input type="file" name="file" hidden />
+                        <span class="support">Supports: JPEG, JPG, PNG</span>
+                        <span class="note">Image of your ID card should be visible at 4 corners and make sure it is front side </span>
+                    </div>
+    
+                    <div class="container__submit">
+                        <div>
+                            <input type="submit" onclick="loading_on()" value="Extract" class="btn-extract" id="submitbtn" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="person">
+                <h3>Your ID information:</h3>
+                <div class="person__img"></div>
+                <div class="person__info">
+                    <span class="info__id">ID: </span><br />
+                    <span class="info__name">Full name: </span><br />
+                    <span class="info__date">Date of birth: </span><br />
+                    <span class="info__sex">Sex: </span><br />
+                    <span class="info__nation">Nationality: </span><br />
+                    <span class="info__hometown">Place of origin: </span><br />
+                    <span class="info__address">Place of residence: </span><br />
+                    <span class="info__doe">Date of expiry: </span><br />
+                </div>
+            </div>
+        </div>
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
+        <!-- <script src="./script.js"></script> -->
+    </body>
+</html>
