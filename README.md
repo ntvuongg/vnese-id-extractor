@@ -23,7 +23,7 @@ git clone https://github.com/ntvuongg/vnese-id-extractor.git
 ### **Installing requirements**
 
 ```
-while read setup; do conda install --yes $setup || pip install $setup || conda install —yes -c  $setup $setup; done < setup.txt
+while read setup; do conda install --yes $setup || pip install $setup || conda install --yes -c  $setup $setup; done < setup.txt
 ```
 
 ### **Getting weights**
