@@ -2,7 +2,7 @@
 
 ## **Introduction**
 
-A tool using **Keras** models which is implementation of [**YOLOv4**](https://github.com/AlexeyAB/darknet) (Tensorflow backend) for detection and [**VietOCR**](https://github.com/pbcquoc/vietocr) for recognition.
+An ID Card extraction tool using **Keras** models which is implementation of [**YOLOv4**](https://github.com/AlexeyAB/darknet) (Tensorflow backend) for detection and [**VietOCR**](https://github.com/pbcquoc/vietocr) for recognition.
 
 ## **Tutorial**
 
