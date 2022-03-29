@@ -77,6 +77,11 @@ document.querySelector('form').addEventListener('submit', function(e) {
       document.querySelector('.info__address').innerHTML = `Place of residence: ${data[7]}`;
       document.querySelector('.info__doe').innerHTML = `Date of expiry: ${data[8]}`;
     }
+    else if (xhr.status == 404){
+      const data = JSON.parse(xhr.responseText).data;
+      window.alert(data)
+      loading_off()
+    }
   }
   const URL = '/uploader';
   xhr.open('POST', URL);

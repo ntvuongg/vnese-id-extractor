@@ -1,27 +1,4 @@
-from flask import Flask, render_template, request, jsonify
-from werkzeug.utils import secure_filename
-import align
-
-app = Flask(__name__,template_folder='./')
-
-import os
-import colorsys
-
-import numpy as np
-from keras import backend as K
-from keras.layers import Input
-
-from yolo4.model import yolo_eval, yolo4_body
-from yolo4.utils import letterbox_image
-
-import tensorflow as tf
-
-from vietocr.tool.predictor import Predictor
-from vietocr.tool.config import Cfg
-
-from PIL import Image, ImageFont, ImageDraw
-import cv2
-
+from modules import *
 
 class Yolo4(object):
     def get_class(self):
@@ -85,7 +62,6 @@ class Yolo4(object):
         self.sess.close()
 
     def detect_image(self, image, model_image_size=(608, 608)):
-        # start = timer()
 
         boxed_image = letterbox_image(image, tuple(reversed(model_image_size)))
         image_data = np.array(boxed_image, dtype='float32')
@@ -126,7 +102,7 @@ class Yolo4(object):
             right = min(image.size[0], np.floor(right + 0.5).astype('int32'))
             print(label, (left, top), (right, bottom))
             BB_file.write(str(c) + ' ' + str(left) + ' ' + str(top) + ' '  + str(right) + ' ' + str(bottom))
-            if c < len(out_classes) -1:
+            if c < len(self.class_names) - 1:
               BB_file.write('\n')
 
             if top - label_size[1] >= 0:
@@ -146,8 +122,6 @@ class Yolo4(object):
             del draw
 
         BB_file.close()
-        # end = timer()
-        # print(end - start)
         return image
 
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
@@ -165,6 +139,7 @@ model_image_size = (608, 608)
 yolo4_corner_model = Yolo4(SCORE, IOU, ANCHORS, CORNER_CLASSES, CORNER_MODEL)
 yolo4_content_model = Yolo4(SCORE, IOU, ANCHORS, CONTENT_CLASSES, CONTENT_MODEL)
 
+app = Flask(__name__,template_folder='./')
 
 @app.route("/", methods=['GET'])
 def show_template():
@@ -189,9 +164,6 @@ def upload():
             # Save image to ./uploads
             f.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
 
-            # yolo4_corner_model = Yolo4(SCORE, IOU, ANCHORS, CORNER_CLASSES, CORNER_MODEL)
-            # yolo4_content_model = Yolo4(SCORE, IOU, ANCHORS, CONTENT_CLASSES, CONTENT_MODEL)
-
             INPUT_IMG = os.listdir('./uploads')
             if INPUT_IMG is not None:
                 img = Image.open(os.path.join('./uploads', INPUT_IMG[0]))
@@ -203,6 +175,17 @@ def upload():
             result.save('./detection.jpg')
             
             total_bb = align.get_bb_cor('bb_cor.txt')
+
+            if len(total_bb) < 4:
+                response = {
+                "data": "Missing corner! Detection failed!"
+                }
+            elif len(total_bb) > 4:
+                response = {
+                "data": "Corner noise detected! Detection failed!"
+                }
+                return jsonify(response), 404
+
             center_points = list(map(align.get_center_point, total_bb))
             # Temporary fixing
             c2, c3 = center_points[2], center_points[3]
@@ -216,12 +199,18 @@ def upload():
             aligned_img = Image.open('./aligned.jpg')
             aligned_copy = aligned_img.copy()
             result2 = yolo4_content_model.detect_image(aligned_img, model_image_size=model_image_size)
-            # yolo4_corner_model.close_session()
-            # yolo4_content_model.close_session()
             bb_cor = open('bb_cor.txt','r')
+            if len(total_bb) < 10:
+                response = {
+                    "data": "Missing fields! Detection failed!"
+                 }
+            elif len(total_bb) > 10:
+                response = {
+                    "data": "Wrong fields detected! Detection failed!"
+                 }
+                return jsonify(response), 404
             bb_cor = [line.strip() for line in bb_cor]
-
-            # current_path = os.getcwd()
+            
             save_dir = os.path.join('./','static/src')
             if not os.path.isdir(save_dir):
                 os.mkdir(save_dir)
@@ -251,24 +240,22 @@ def upload():
                 s = detector.predict(img_)
                 FIELDS_DETECTED.append(s)
 
-            # FIELDS_DETECTED[1:]
-            check_parts = [True] * 10
+            check_parts = [False] * 10
 
             for part in os.listdir(save_dir):
-                if part[:-4] not in ['0','1','2','3','4','5','6','7','8','9']:
-                    check_parts[part[:-4]] = False
+                if int(part[:-4]) in range(0,10):
+                    check_parts[int(part[:-4])] = True
 
-            print(FIELDS_DETECTED)
             if check_parts[7] is True:
                 FIELDS_DETECTED = FIELDS_DETECTED[:7] + [FIELDS_DETECTED[7] + ' ' + FIELDS_DETECTED[8]] + [FIELDS_DETECTED[9]]
             else:
-                FIELDS_DETECTED = FIELDS_DETECTED[:7] + [FIELDS_DETECTED[7] + FIELDS_DETECTED[8]] + [FIELDS_DETECTED[9]]
+                FIELDS_DETECTED.pop(7)
+
             response = {
                 "data": FIELDS_DETECTED
             }
-            # return render_template("main.html", data=FIELDS_DETECTED)
+
             return jsonify(response)
 
 if __name__ == "__main__":
-    app.run(debug=True)
-    # app.run(host='127.0.0.1',port='5000',debug=True)
+    app.run(host='0.0.0.0',port='8080',debug=True)
