@@ -1,6 +1,8 @@
 # **Vietnamese ID Card Extractor v1.0**
 ❗ ## **Newer version**
+
 Checkout[**ID Card Extractor v2.0**](https://github.com/ntvuongg/vnese-id-extractor-v2)
+
 ## **Introduction**
 
 An ID Card extraction tool using **Keras** models which is implementation of [**YOLOv4**](https://github.com/AlexeyAB/darknet) (Tensorflow backend) for detection and [**VietOCR**](https://github.com/pbcquoc/vietocr) for recognition.
