@@ -31,7 +31,7 @@ while read setup; do conda install --yes $setup || pip install $setup || conda i
 
 ### **Getting weights**
 
-You can [click here](https://drive.google.com/uc?export=download&id=1dAK75XvXP8L32FoSc1W3fFnt80Z32f1L) to download my trained weights or get it from **gdown** module:
+You can [click here](https://drive.google.com/drive/folders/1CDiN1Ogq1h4VzOQG5eqLh4eEuP065bWj?usp=sharing) to download my trained weights or get it from **gdown** module:
 
 (You can pass below code if you have already installed **gdown**)
 
